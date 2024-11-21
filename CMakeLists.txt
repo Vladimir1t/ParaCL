@@ -42,12 +42,12 @@ set(FLAGS   "-D NDEBUG")
 add_executable(para_cl.x ${srcs})
 # add_executable(test.x    ${test_srcs})
 
-target_include_directories(rb_tree.x PRIVATE 
-            ${CMAKE_SOURCE_DIR}/include     
+target_include_directories(para_cl.x PRIVATE 
+            ${CMAKE_SOURCE_DIR}Frontend/include     
 )
-target_include_directories(test.x PRIVATE 
-            ${CMAKE_SOURCE_DIR}/include        
-)
+# target_include_directories(test.x PRIVATE 
+#             ${CMAKE_SOURCE_DIR}Frontend/include        
+# )
 
 target_compile_options(para_cl.x  PRIVATE "$<$<CONFIG:RELEASE>:${CMAKE_CXX_FLAGS_RELEASE}>" ${FLAGS})
 # target_compile_options(test.x  PRIVATE "$<$<CONFIG:RELEASE>:${CMAKE_CXX_FLAGS_RELEASE}>" ${FLAGS})
@@ -56,7 +56,7 @@ target_compile_options(para_cl.x  PRIVATE "$<$<CONFIG:RELEASE>:${CMAKE_CXX_FLAGS
 # cmake -DSET_MODE_ENABLED=ON -DCUSTOM_SET_VALUE=DEBUG -S . -B build
 # cmake --build build
 # cmake -DCMAKE_BUILD_TYPE=Release
-# ./build/rb_tree.x
+# ./build/para_cl.x
 #
 # cmake .. -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=./../../../../include-what-you-use/build/bin/include-what-you-use
 # make
