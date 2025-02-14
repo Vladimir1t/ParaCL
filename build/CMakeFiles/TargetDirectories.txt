@@ -1,3 +1,0 @@
-/home/andrew/Private/ParaCL/build/CMakeFiles/MyLanguage.dir
-/home/andrew/Private/ParaCL/build/CMakeFiles/edit_cache.dir
-/home/andrew/Private/ParaCL/build/CMakeFiles/rebuild_cache.dir

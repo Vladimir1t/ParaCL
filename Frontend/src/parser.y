@@ -1,8 +1,10 @@
 %{
+#include <iostream>
+#include <string>
 #include "parser.hpp"
 
 extern int yylex();
-void yyerror(const char* s);
+void yyerror(const std::string str);
 %}
 
 %union {
@@ -72,6 +74,6 @@ expr:
 
 %%
 
-void yyerror(const char* s) {
-    fprintf(stderr, "Error: %s\n", s);
-}
+void yyerror(const std::string str) {
+    std::cerr << "Error: " << str <<< std::endl;
+} 

@@ -2,7 +2,8 @@
 ---
 
 ## Brief
-C-style language 
+C-style language.
+Is using Flex and Bison for syntax, lexical analysis and parsing.
 
 ## Using
 Flex - A tool for generating lexical analyzers (scanners) from regular expressions.
@@ -18,4 +19,3 @@ Bison - A parser generator that builds syntax analyzers from context-free gramma
 ## Authors
 - Андрей Глисанов 
 - Владимир Вехов
-- Михаил Ильюшенков

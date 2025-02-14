@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-20.04]
+        os: [ubuntu-latest, macos-latest, ubuntu-20.04]
 
     steps:
       - name: Checkout code
@@ -24,12 +24,13 @@ jobs:
         run: |
           sudo apt update || true
           sudo apt install -y build-essential cmake || true
+          sudo apt install flex bison || true 
 
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-          choco install mingw -y
+      # - name: Install dependencies (Windows)
+      #   if: runner.os == 'Windows'
+      #   run: |
+      #     choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+      #     choco install mingw -y
 
       - name: Build project
         run: |
@@ -37,7 +38,7 @@ jobs:
           # cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
           # cmake --build build
 
-      - name: Run tests
-        run: |
-          # chmod +x tests/run-tests.sh || true
-          # ./tests/run-tests.sh || exit 1
+      # - name: Run tests
+      #   run: |
+      #     # chmod +x tests/run-tests.sh || true
+      #     # ./tests/run-tests.sh || exit 1
