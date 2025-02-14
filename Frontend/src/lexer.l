@@ -11,7 +11,7 @@ ID          {LETTER}({LETTER}|{DIGIT})*
 
 %%
 
-[ \t\r\n]+              ; // Пропуск пробельных символов
+[ \t\r\n]+              ; 
 "if"                    { return IF; }
 "else"                  { return ELSE; }
 "="                     { return '='; }
