@@ -3,77 +3,78 @@
 #include <string>
 #include "parser.hpp"
 
-extern int yylex();
+int yylex();
 void yyerror(const std::string str);
 %}
 
 %union {
     int intval;
-    double doubleval;
     char* str;
-    ASTNode* ast;
-    Declaration* decl;
-    Assignment* assign;
-    IfStatement* ifstmt;
 }
 
-%type <ast> program
-%type <decl> declaration
-%type <assign> assignment
-%type <ifstmt> if_statement
-%type <ast> expr
-
-
 %token <intval> INTEGER
-%token <doubleval> FLOAT
 %token <str> IDENTIFIER
+%token IF ELSE ASSIGN EQ
+%token '(' ')' LSKOPE RSKOPE
+%type <intval> expr
+%type <str> assignment
 
 %%
 
 program:
-      declarations statements
+    statement_list
     ;
 
-declarations:
-      declaration ';'
-    | declarations declaration ';'
+statement_list:
+    statement 
+    | statement_list statement 
     ;
 
-declaration:
-      /* ваша логика для объявления */
-      { $$ = new Declaration(/* параметры */); }
-    |
-      { $$ = nullptr; }
+statement:
+    assignment ';'
+    | if_statement
     ;
 
 assignment:
-      IDENTIFIER '=' expr
-      { $$ = new Assignment($1, $3); }
-    | /* другие варианты */
-      { $$ = nullptr; }
+    IDENTIFIER ASSIGN expr
+    { std::cout << "Assign " << $1 << " = " << $3 << std::endl; }
     ;
 
 if_statement:
-      "if" '(' expr ')' statement
-      { $$ = new IfStatement($3, $5); }
-    | /* другие варианты */
-      { $$ = nullptr; }
+    IF '(' expr ')' LSKOPE statement_list RSKOPE
+    { std::cout << "IF condition" << std::endl; }
+    | IF   '(' expr ')' LSKOPE statement_list RSKOPE 
+      ELSE LSKOPE statement_list RSKOPE 
+    { std::cout << "IF-ELSE condition" << std::endl; }
     ;
 
 expr:
-      INTEGER
-      { $$ = new IntegerExpression($1); }
+    INTEGER
+    { $$ = $1; }
     | IDENTIFIER
-      { $$ = new VariableExpression($1); }
+    { $$ = 0; }
     | expr '+' expr
-      { $$ = new BinaryExpression("+", $1, $3); }
-    |
-      { $$ = nullptr; }
+    { $$ = $1 + $3; }
+    | expr '-' expr
+    { $$ = $1 - $3; }
+    | expr '*' expr
+    { $$ = $1 * $3; }
+    | expr '/' expr
+    { $$ = $1 / $3; }
+    | expr EQ expr
+    { $$ = ($1 == $3); }
+    | '(' expr ')'
+    { $$ = $2; }
     ;
 
 
 %%
 
 void yyerror(const std::string str) {
-    std::cerr << "Error: " << str <<< std::endl;
+    std::cerr << "Error: " << str << std::endl;
 } 
+
+int main() {
+    yyparse();
+    return 0;
+}
