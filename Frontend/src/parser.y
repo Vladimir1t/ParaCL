@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include "AST.hpp"
+#include "ast.hpp"
 
 int yylex();
 void yyerror(const std::string& str);
