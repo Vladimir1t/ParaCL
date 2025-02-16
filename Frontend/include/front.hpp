@@ -1,6 +1,4 @@
-#ifndef FRONT_HPP
-#define FRONT_HPP
-
+#pragma once
 #include <memory>
 #include <string>
 #include <iostream>
@@ -25,4 +23,3 @@ public:
         std::cout << "value of identifier: " << name << std::endl;
     }
 };
-#endif // FRONT_HPP
