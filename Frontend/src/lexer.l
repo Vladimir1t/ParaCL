@@ -1,33 +1,37 @@
 %{
-#include "parser.hpp"
 #include <cstdlib>
+#include <iostream>
+#include "parser.hpp"
 
-extern int yylval;
+extern YYSTYPE yylval;
 %}
 
 DIGIT       [0-9]
 LETTER      [a-zA-Z_]
-ID          {LETTER}({LETTER}|{DIGIT})*
+IDENTIFIER  {LETTER}({LETTER}|{DIGIT})*
 
 %%
 
-[ \t\r\n]+              ; // Пропуск пробельных символов
-"if"                    { return IF; }
-"else"                  { return ELSE; }
-"="                     { return '='; }
-"+"                     { return '+'; }
-"("                     { return '('; }
-")"                     { return ')'; }
-";"                     { return ';'; }
-{ID}                    {
-                            yylval.string = new std::string(yytext);
-                            return IDENTIFIER;
-                        }
-{DIGIT}+                {
-                            yylval.intval = std::atoi(yytext);
-                            return INTEGER;
-                        }
-.                       { return yytext[0]; }
+[ \t\r\n]+            { /* skip */        }
+"if"                  { return IF;        }
+"else"                { return ELSE;      }
+"="                   { return ASSIGN;    }
+"=="                  { return EQ;        }
+[+-/*]                { return yytext[0]; }
+"("                   { return '(';       }
+")"                   { return ')';       }
+"{"                   { return LSKOPE;    }
+"}"                   { return RSKOPE;    }
+";"                   { return ';';       }
+{IDENTIFIER}          {
+                        yylval.str = strdup(yytext); 
+                        return IDENTIFIER;
+                      }
+{DIGIT}+              {
+                        yylval.intval = std::atoi(yytext);
+                        return INTEGER;
+                      }
+.                     { return yytext[0]; }
 
 %%
 
