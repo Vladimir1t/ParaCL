@@ -1,33 +1,48 @@
 %{
 #include <iostream>
 #include <string>
-#include "parser.hpp"
+#include <memory>
+#include <vector>
+#include "AST.hpp"
 
 int yylex();
-void yyerror(const std::string str);
+void yyerror(const std::string& str);
+
+std::unique_ptr<ASTNode> root;  // глобальный указатель на корень дерева
 %}
 
 %union {
     int intval;
     char* str;
+    ASTNode* node;
+    ExprNode* exprnode;
+    std::vector<std::unique_ptr<ASTNode>>* stmtlist;
 }
 
 %token <intval> INTEGER
 %token <str> IDENTIFIER
 %token IF ELSE ASSIGN EQ
+%token '+' '-' '*' '/'
 %token '(' ')' LSKOPE RSKOPE
-%type <intval> expr
-%type <str> assignment
+%type <node> assignment
+%type <node> if_statement
+%type <node> program
+%type <node> statement
+%type <exprnode> expr
+%type <stmtlist> statement_list
 
 %%
 
 program:
     statement_list
+    { root = std::unique_ptr<ASTNode>(new std::vector<std::unique_ptr<ASTNode>>(std::move(*$1))); delete $1; }
     ;
 
 statement_list:
-    statement 
+    statement  
+    { $$ = new std::vector<std::unique_ptr<ASTNode>>(); $$->emplace_back($1); }
     | statement_list statement 
+    { $$ = $1; $$->emplace_back($2); }
     ;
 
 statement:
@@ -37,44 +52,56 @@ statement:
 
 assignment:
     IDENTIFIER ASSIGN expr
-    { std::cout << "Assign " << $1 << " = " << $3 << std::endl; }
+    {
+        $$ = new AssignmentNode($1, std::unique_ptr<ExprNode>($3));
+        std::cout << "Assignment created for " << $1 << "\n";
+    }
     ;
 
 if_statement:
     IF '(' expr ')' LSKOPE statement_list RSKOPE
-    { std::cout << "IF condition" << std::endl; }
-    | IF   '(' expr ')' LSKOPE statement_list RSKOPE 
-      ELSE LSKOPE statement_list RSKOPE 
-    { std::cout << "IF-ELSE condition" << std::endl; }
+    { 
+        $$ = new IfNode(std::unique_ptr<ExprNode>($3), std::move(*$6));
+        delete $6;
+        std::cout << "If statement created\n"; 
+    }
+    | IF '(' expr ')' LSKOPE statement_list RSKOPE ELSE LSKOPE statement_list RSKOPE
+    { 
+        $$ = new IfNode(std::unique_ptr<ExprNode>($3), std::move(*$6), std::move(*$10));
+        delete $6;
+        delete $10;
+        std::cout << "If-Else statement created\n"; 
+    }
     ;
 
 expr:
     INTEGER
-    { $$ = $1; }
+    { $$ = new IntegerNode($1); }
     | IDENTIFIER
-    { $$ = 0; }
+    { $$ = new IdentifierNode($1); }
     | expr '+' expr
-    { $$ = $1 + $3; }
+    { $$ = new BinaryOpNode(std::unique_ptr<ExprNode>($1), std::unique_ptr<ExprNode>($3), "+"); }
     | expr '-' expr
-    { $$ = $1 - $3; }
+    { $$ = new BinaryOpNode(std::unique_ptr<ExprNode>($1), std::unique_ptr<ExprNode>($3), "-"); }
     | expr '*' expr
-    { $$ = $1 * $3; }
+    { $$ = new BinaryOpNode(std::unique_ptr<ExprNode>($1), std::unique_ptr<ExprNode>($3), "*"); }
     | expr '/' expr
-    { $$ = $1 / $3; }
-    | expr EQ expr
-    { $$ = ($1 == $3); }
+    { $$ = new BinaryOpNode(std::unique_ptr<ExprNode>($1), std::unique_ptr<ExprNode>($3), "/"); }
     | '(' expr ')'
     { $$ = $2; }
     ;
 
-
 %%
 
-void yyerror(const std::string str) {
+void yyerror(const std::string& str) {
     std::cerr << "Error: " << str << std::endl;
 } 
 
 int main() {
     yyparse();
+    if (root) {
+        root->print();
+        std::cout << "AST generated successfully." << std::endl;
+    }
     return 0;
 }
