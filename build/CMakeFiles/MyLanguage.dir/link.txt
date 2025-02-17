@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/MyLanguage.dir/Frontend/src/main.cpp.o CMakeFiles/MyLanguage.dir/Frontend/src/para_cl.cpp.o CMakeFiles/MyLanguage.dir/parser.cpp.o CMakeFiles/MyLanguage.dir/lexer.cpp.o -o MyLanguage 

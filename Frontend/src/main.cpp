@@ -1,5 +1,5 @@
 #include <iostream>
-#include "parser.hpp"
+#include "../include/ast.hpp"
 
 int main(int argc, char** argv) {
     std::cout << "Simple Language Interpreter" << std::endl;
